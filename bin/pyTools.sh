@@ -7,8 +7,12 @@ ORIGIN="
 "
 
 ####+BEGIN: bx:bash:top-of-file :vc "cvs" partof: "bystar" :copyleft "halaal+brief"
-typeset RcsId="$Id: usgSshAccess.sh,v 1.2 2017-04-09 23:21:06 lsipusr Exp $"
+### Args: :control "enabled|disabled|hide|release|fVar"  :vc "cvs|git|nil" :partof "bystar|nil" :copyleft "halaal+minimal|halaal+brief|nil"
+typeset RcsId="$Id: dblock-iim-bash.el,v 1.4 2017-02-08 06:42:32 lsipusr Exp $"
 # *CopyLeft*
+__copying__="
+* Libre-Halaal Software"
+#  This is part of ByStar Libre Services. http://www.by-star.net
 # Copyright (c) 2011 Neda Communications, Inc. -- http://www.neda.com
 # See PLPC-120001 for restrictions.
 # This is a Halaal Poly-Existential intended to remain perpetually Halaal.
@@ -20,23 +24,21 @@ __author__="
 
 ####+BEGIN: bx:bsip:bash:seed-spec :types "seedActions.bash"
 SEED="
-*  /[dblock]/ /Seed/ :: [[file:/bisos/core/bsip/bin/seedActions.bash]] | 
+*  /[dblock]/ /Seed/ :: [[file:/bisos/core/bsip/bin/seedActions.bash]] |
 "
 FILE="
-*  /This File/ :: /bisos/core/bsip/bin/usgBpoSshManage.sh 
+*  /This File/ :: /bisos/git/auth/bxRepos/bisos/dev/bin/pyTools.sh
 "
 if [ "${loadFiles}" == "" ] ; then
-    /bisos/core/bsip/bin/seedActions.bash -l $0 "$@" 
+    /bisos/core/bsip/bin/seedActions.bash -l $0 "$@"
     exit $?
 fi
 ####+END:
 
 _CommentBegin_
 ####+BEGIN: bx:dblock:global:file-insert-cond :cond "./blee.el" :file "/libre/ByStar/InitialTemplates/software/plusOrg/dblock/inserts/topControls.org"
-*      ================
-*  /Controls/:  [[elisp:(org-cycle)][Fold]]  [[elisp:(show-all)][Show-All]]  [[elisp:(org-shifttab)][Overview]]  [[elisp:(progn (org-shifttab) (org-content))][Content]] | [[elisp:(bx:org:run-me)][RunMe]] | [[elisp:(delete-other-windows)][(1)]]  | [[elisp:(progn (save-buffer) (kill-buffer))][S&Q]]  [[elisp:(save-buffer)][Save]]  [[elisp:(kill-buffer)][Quit]] 
-** /Version Control/:  [[elisp:(call-interactively (quote cvs-update))][cvs-update]]  [[elisp:(vc-update)][vc-update]] | [[elisp:(bx:org:agenda:this-file-otherWin)][Agenda-List]]  [[elisp:(bx:org:todo:this-file-otherWin)][ToDo-List]] 
-
+*  /Controls/ ::  [[elisp:(org-cycle)][| ]]  [[elisp:(show-all)][Show-All]]  [[elisp:(org-shifttab)][Overview]]  [[elisp:(progn (org-shifttab) (org-content))][Content]] | [[file:Panel.org][Panel]] | [[elisp:(blee:ppmm:org-mode-toggle)][Nat]] | [[elisp:(bx:org:run-me)][Run]] | [[elisp:(bx:org:run-me-eml)][RunEml]] | [[elisp:(delete-other-windows)][(1)]] | [[elisp:(progn (save-buffer) (kill-buffer))][S&Q]]  [[elisp:(save-buffer)][Save]]  [[elisp:(kill-buffer)][Quit]] [[elisp:(org-cycle)][| ]]
+** /Version Control/ ::  [[elisp:(call-interactively (quote cvs-update))][cvs-update]]  [[elisp:(vc-update)][vc-update]] | [[elisp:(bx:org:agenda:this-file-otherWin)][Agenda-List]]  [[elisp:(bx:org:todo:this-file-otherWin)][ToDo-List]]
 ####+END:
 _CommentEnd_
 
@@ -117,15 +119,28 @@ function vis_examples {
     visLibExamplesOutput ${G_myName} 
   cat  << _EOF_
 $( examplesSeperatorTopLabel "${G_myName}" )
-$( examplesSeperatorChapter "Python Binaries" )
-$( examplesSeperatorSection "Development Stash Status" )
-$(vis_venvPy3Dev_stashStatus)
-${G_myName} ${extraInfo} -i venvPy3Dev_stash
-${G_myName} ${extraInfo} -i venvPy3Dev_unStash
-$( examplesSeperatorSection "pyBinsVerify" )
-${G_myName} ${examplesInfo} -p pyEnv="default" -i pyBinsVerify
-${G_myName} ${examplesInfo} -p pyEnv="dev" -i pyBinsVerify
-${G_myName} ${examplesInfo} -p pyEnv="cur" -i pyBinsVerify
+$( examplesSeperatorChapter "General Pip Facilities" )
+pip freeze
+pip list
+pip list --outdated
+pip search .
+pip search . | egrep -B1 'INSTALLED|LATEST'
+$( examplesSeperatorChapter "Package Manipulations" )
+pip show ${onePipPkg}
+pip show jedi | egrep '^Version' | cut -d ':' -f 2
+pip uninstall ${onePipPkg}
+pip install ${onePipPkg}
+pip install --upgrade ${onePipPkg}
+$( examplesSeperatorChapter "PYPI" )
+https://pypi.python.org/pypi/
+yolk -l
+NOTYET, ABSORB THESE
+pipreqs --force .
+johnnydep -v 0 $pypiPkgName
+pipdeptree -r -p $pypiPkgName # Needs a virtEnv
+pipdeptree -fl -p $pypiPkgName # Needs a virtEnv
+yolk -U $pypiPkgName # show if update available at PyPI
+NOTYET: Point to calltree generation, classbrowsers, etc
 _EOF_
 
 }
@@ -140,38 +155,13 @@ _CommentBegin_
 _CommentEnd_
 
 
-function vis_pyBinsVerify {
+function vis_placeHolder {
     G_funcEntry
     function describeF {  G_funcEntryShow; cat  << _EOF_
 ** With the specified basic test ICMs.
-*** TODO Based on pyEnv have the apropriate venv in the path.
-*** TODO Create lists of PyICM and ShICMs to be tested.
-*** TODO Have a verify or version cmnd for each ICM
 _EOF_
     }
     EH_assert [[ $# -eq 0 ]]
-    EH_assert [ ! -z "${pyEnv}" ]
-
-    local bisosEnv=""
-
-    if [ "${pyEnv}" == "dev" ] ; then
-        lpDo vis_venvPy3Dev_unStash
-    elif [ "${pyEnv}" == "cur" ] ; then
-        lpDo vis_venvPy3Dev_stash
-    elif [ "${pyEnv}" == "default" ] ; then
-        opDoNothing
-    else
-        EH_problem "Bad pyEnv=${pyEnv}"
-    fi
-
-    local bpipBinList=(
-        "icmEx-shRun.py"
-    )
-
-    for each in ${bpipBinList[@]} ; do
-        lpDo which -a ${each}
-        lpDo ${each} -i version
-    done
 
     lpReturn
 }
@@ -185,7 +175,7 @@ _CommentEnd_
 
 ####+BEGIN: bx:dblock:bash:end-of-file :type "basic"
 _CommentBegin_
-*      ================ /[dblock] -- End-Of-File Controls/
+*  [[elisp:(org-cycle)][| ]]  Common        ::  /[dblock] -- End-Of-File Controls/ [[elisp:(org-cycle)][| ]]
 _CommentEnd_
 #+STARTUP: showall
 #local variables:
